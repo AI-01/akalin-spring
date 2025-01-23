@@ -3,6 +3,7 @@ package com.akalin.spring.beans.factory.support;
 import com.akalin.spring.beans.BeansException;
 import com.akalin.spring.core.io.Resource;
 import com.akalin.spring.core.io.ResourceLoader;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 
 public interface BeanDefinitionReader {
 
@@ -16,4 +17,5 @@ public interface BeanDefinitionReader {
 
     void loadBeanDefinitions(Resource... resources) throws BeansException;
 
+    void loadBeanDefinitions(String... locations) throws BeansException;
 }

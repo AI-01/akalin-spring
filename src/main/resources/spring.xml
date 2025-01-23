@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans>
+
     <bean id="userDao" class="com.akalin.spring.bean.UserDao"/>
 
     <bean id="userService" class="com.akalin.spring.bean.UserService">
         <property name="uId" value="1001"/>
         <property name="userDao" ref="userDao"/>
     </bean>
+
+<!--    <bean id = "beanFactoryPostProcessor" class="com.akalin.spring.bean.MyBeanFactoryPostProcessor"/>-->
+<!--    <bean id = "beanPostProcessor" class="com.akalin.spring.bean.MyBeanPostProcessor"/>-->
+
 </beans>

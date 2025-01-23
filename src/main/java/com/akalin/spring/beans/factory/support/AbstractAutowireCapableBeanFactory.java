@@ -4,15 +4,18 @@ import cn.hutool.core.bean.BeanUtil;
 import com.akalin.spring.beans.BeansException;
 import com.akalin.spring.beans.PropertyValue;
 import com.akalin.spring.beans.PropertyValues;
+import com.akalin.spring.beans.factory.config.AutowireCapableBeanFactory;
 import com.akalin.spring.beans.factory.config.BeanDefinition;
+import com.akalin.spring.beans.factory.config.BeanPostProcessor;
 import com.akalin.spring.beans.factory.config.BeanReference;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Constructor;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory {
+public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory implements AutowireCapableBeanFactory {
 
     private InstantiationStrategy instantiationStrategy = new CglibSubclassingInstantiationStrategy();
 
@@ -32,6 +35,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             bean = createBeanInstantiation(beanDefinition, beanName, args);
             // 2.依赖注入（属性填充）
             populateBean(beanName, bean, beanDefinition);
+            // 3.初始化bean
+            bean = initializeBean(bean,beanName,beanDefinition);
         } catch (Exception e) {
             throw new BeansException("Instantiation of bean failed",e);
         }
@@ -75,6 +80,52 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         if (log.isDebugEnabled()) {
             log.debug("Instantiation of bean {} with property values : {}", beanName, propertyValues);
         }
+    }
+
+
+    @Override
+    public Object initializeBean(Object existingBean, String beanName, BeanDefinition beanDefinition) throws BeansException {
+
+        // 应用 BeanPostProcessor 的 postProcessBeforeInitialization 方法
+        Object wrappedBean = existingBean;
+        wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
+
+        // 调用初始化方法
+        try {
+            invokeInitMethods(beanName, wrappedBean, beanDefinition);
+        } catch (Throwable ex) {
+            throw new BeansException("Invocation of init method of bean [" + beanName + "] failed", ex);
+        }
+
+        // 应用 BeanPostProcessor 的 postProcessAfterInitialization 方法
+        wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
+
+        return wrappedBean;
+    }
+
+    private void invokeInitMethods(String beanName, Object wrappedBean, BeanDefinition beanDefinition) {
+
+    }
+
+    public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName) throws BeansException {
+        Object result = existingBean;
+        for (BeanPostProcessor processor : getBeanPostProcessors()) {
+            Object current = processor.postProcessBeforeInitialization(result, beanName);
+            if (null == current) return result;
+            result = current;
+        }
+        return result;
+    }
+
+
+    public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName) throws BeansException {
+        Object result = existingBean;
+        for (BeanPostProcessor processor : getBeanPostProcessors()) {
+            Object current = processor.postProcessAfterInitialization(result, beanName);
+            if (null == current) return result;
+            result = current;
+        }
+        return result;
     }
 
 }

@@ -3,10 +3,21 @@ package com.akalin.spring.beans.factory.support;
 import com.akalin.spring.beans.BeansException;
 import com.akalin.spring.beans.factory.BeanFactory;
 import com.akalin.spring.beans.factory.config.BeanDefinition;
+import com.akalin.spring.beans.factory.config.BeanPostProcessor;
+import com.akalin.spring.beans.factory.config.ConfigurableBeanFactory;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 @Slf4j
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory {
+public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory {
+
+    private final List<BeanPostProcessor> beanPostProcessors = new CopyOnWriteArrayList<>();
+
+    public List<BeanPostProcessor> getBeanPostProcessors() {
+        return this.beanPostProcessors;
+    }
 
     @Override
     public Object getBean(String name, Object... args) throws BeansException {
@@ -47,4 +58,13 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
      */
     protected abstract Object createBean(String beanName, BeanDefinition beanDefinition, Object[] args) throws BeansException;
 
+    @Override
+    public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
+        synchronized (this.beanPostProcessors) {
+            // Remove from old position, if any
+            this.beanPostProcessors.remove(beanPostProcessor);
+            // Add to end of list
+            this.beanPostProcessors.add(beanPostProcessor);
+        }
+    }
 }
