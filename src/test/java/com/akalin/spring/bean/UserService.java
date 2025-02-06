@@ -1,16 +1,32 @@
 package com.akalin.spring.bean;
 
+import com.akalin.spring.beans.factory.DisposableBean;
+import com.akalin.spring.beans.factory.InitializingBean;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class UserService {
+public class UserService implements InitializingBean, DisposableBean {
+
 
     private String uId;
-
-    private String name;
-
-    private Integer age;
+    private String company;
+    private String location;
     private UserDao userDao;
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("执行：UserService.destroy");
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("执行：UserService.afterPropertiesSet");
+    }
+
+    public void queryUserInfo() {
+        String s = userDao.queryUserName(uId);
+        log.info("result={}", s);
+    }
 
     public String getuId() {
         return uId;
@@ -20,40 +36,27 @@ public class UserService {
         this.uId = uId;
     }
 
-    public String getName() {
-        return name;
+    public String getCompany() {
+        return company;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCompany(String company) {
+        this.company = company;
     }
 
-    public Integer getAge() {
-        return age;
+    public String getLocation() {
+        return location;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
-    public UserService() {
-        log.info("UserService init, no arg constructor");
+    public UserDao getUserDao() {
+        return userDao;
     }
 
-    public UserService(String uId, UserDao userDao) {
-        log.info("UserService init, two arg constructor");
-        this.uId = uId;
+    public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
     }
-
-    public void queryUserInfo() {
-        String s = userDao.queryById(uId);
-        log.info("uid={},name={},age={}", uId,name,age);
-    }
-
-    public void queryById() {
-        String s = userDao.queryById(uId);
-        log.info("用户信息:{}",s);
-    }
-
 }

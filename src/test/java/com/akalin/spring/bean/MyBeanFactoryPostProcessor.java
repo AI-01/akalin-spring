@@ -12,7 +12,7 @@ public class MyBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         BeanDefinition beanDefinition = beanFactory.getBeanDefinition("userService");
         PropertyValues propertyValues = beanDefinition.getPropertyValues();
-        propertyValues.addPropertyValue(new PropertyValue("age", 18));
+        propertyValues.addPropertyValue(new PropertyValue("location", "shanghai"));
     }
 
 }

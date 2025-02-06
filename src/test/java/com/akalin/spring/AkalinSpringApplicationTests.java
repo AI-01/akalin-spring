@@ -53,6 +53,7 @@ class AkalinSpringApplicationTests {
     public void testBeanFactory() {
         // 1.初始化applicationContext
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
+        applicationContext.registerShutdownHook();
 
         // 2.获取bean并使用
         UserService userService = applicationContext.getBean("userService", UserService.class);

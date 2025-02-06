@@ -16,7 +16,7 @@ public class MyBeanPostProcessor implements BeanPostProcessor {
         log.info("Before Initialization: " + beanName);
         if (beanName.equals("userService")) {
             UserService userService = (UserService) bean;
-            userService.setName("akalin");
+            userService.setCompany("akalin");
         }
         return bean;
     }
