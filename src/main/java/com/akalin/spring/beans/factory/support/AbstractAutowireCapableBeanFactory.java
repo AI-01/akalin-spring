@@ -5,8 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.akalin.spring.beans.BeansException;
 import com.akalin.spring.beans.PropertyValue;
 import com.akalin.spring.beans.PropertyValues;
-import com.akalin.spring.beans.factory.DisposableBean;
-import com.akalin.spring.beans.factory.InitializingBean;
+import com.akalin.spring.beans.factory.*;
 import com.akalin.spring.beans.factory.config.AutowireCapableBeanFactory;
 import com.akalin.spring.beans.factory.config.BeanDefinition;
 import com.akalin.spring.beans.factory.config.BeanPostProcessor;
@@ -97,6 +96,19 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
     @Override
     public Object initializeBean(Object existingBean, String beanName, BeanDefinition beanDefinition) throws BeansException {
+
+        // 设置Aware，使得Aware实现类可以获取BeanFactory和BeanClassLoader等信息
+        if (existingBean instanceof Aware){
+            if (existingBean instanceof BeanFactoryAware){
+                ((BeanFactoryAware) existingBean).setBeanFactory(this);
+            }
+            if (existingBean instanceof BeanClassLoaderAware){
+                ((BeanClassLoaderAware) existingBean).setBeanClassLoader(getBeanClassLoader());
+            }
+            if (existingBean instanceof BeanNameAware){
+                ((BeanNameAware) existingBean).setBeanName(beanName);
+            }
+        }
 
         // 应用 BeanPostProcessor 的 postProcessBeforeInitialization 方法
         Object wrappedBean = existingBean;

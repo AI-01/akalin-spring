@@ -1,7 +1,6 @@
 package com.akalin.spring.beans.factory.support;
 
 import com.akalin.spring.beans.BeansException;
-import com.akalin.spring.beans.factory.BeanFactory;
 import com.akalin.spring.beans.factory.config.BeanDefinition;
 import com.akalin.spring.beans.factory.config.BeanPostProcessor;
 import com.akalin.spring.beans.factory.config.ConfigurableBeanFactory;
@@ -14,6 +13,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory {
 
     private final List<BeanPostProcessor> beanPostProcessors = new CopyOnWriteArrayList<>();
+
+    /**
+     * bean类加载器
+     */
+    private ClassLoader beanClassLoader = ClassLoader.getSystemClassLoader();
 
     public List<BeanPostProcessor> getBeanPostProcessors() {
         return this.beanPostProcessors;
@@ -67,4 +71,9 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             this.beanPostProcessors.add(beanPostProcessor);
         }
     }
+
+    public ClassLoader getBeanClassLoader() {
+        return this.beanClassLoader;
+    }
+
 }

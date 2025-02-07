@@ -58,6 +58,8 @@ class AkalinSpringApplicationTests {
         // 2.获取bean并使用
         UserService userService = applicationContext.getBean("userService", UserService.class);
         userService.queryUserInfo();
+        System.out.println("ApplicationContextAware=" + userService.getApplicationContext());
+        System.out.println("BeanFactoryAware=" + userService.getBeanFactory());
     }
 
 }
