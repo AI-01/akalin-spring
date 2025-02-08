@@ -71,15 +71,16 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             }
 
             // 读取属性
-            Element ele = (Element) childNodes.item(i);
-            String id = ele.getAttribute("id");
-            String name = ele.getAttribute("name");
-            String className = ele.getAttribute("class");
-            String initMethod = ele.getAttribute("init-method");
-            String destroyMethod = ele.getAttribute("destroy-method");
+            Element bean = (Element) childNodes.item(i);
+            String id = bean.getAttribute("id");
+            String name = bean.getAttribute("name");
+            String className = bean.getAttribute("class");
+            String initMethod = bean.getAttribute("init-method");
+            String destroyMethod = bean.getAttribute("destroy-method");
+            String beanScope = bean.getAttribute("scope");
 
             Class<?> clazz = Class.forName(className);
-            String beanName = StrUtil.isNotBlank(id)?id:name;
+            String beanName = StrUtil.isNotBlank(id) ? id : name;
             if (StrUtil.isBlank(beanName)) {
                 beanName = StrUtil.lowerFirst(clazz.getSimpleName());
             }
@@ -88,16 +89,19 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             BeanDefinition beanDefinition = new BeanDefinition(clazz);
             beanDefinition.setInitMethodName(initMethod);
             beanDefinition.setDestroyMethodName(destroyMethod);
+            if (StrUtil.isNotBlank(beanScope)) {
+                beanDefinition.setScope(beanScope);
+            }
             // 读取属性并注入
-            for (int j = 0; j < ele.getChildNodes().getLength(); j++) {
-                if (!(ele.getChildNodes().item(j) instanceof Element)) {
+            for (int j = 0; j < bean.getChildNodes().getLength(); j++) {
+                if (!(bean.getChildNodes().item(j) instanceof Element)) {
                     continue;
                 }
-                if (!"property".equals(ele.getChildNodes().item(j).getNodeName())) {
+                if (!"property".equals(bean.getChildNodes().item(j).getNodeName())) {
                     continue;
                 }
                 // 处理标签property, 包括 1. name 2. value 3. ref
-                Element prop = (Element) ele.getChildNodes().item(j);
+                Element prop = (Element) bean.getChildNodes().item(j);
                 String attrName = prop.getAttribute("name");
                 String attrValue = prop.getAttribute("value");
                 String ref = prop.getAttribute("ref");
