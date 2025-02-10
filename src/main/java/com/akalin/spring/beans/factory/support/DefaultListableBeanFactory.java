@@ -72,4 +72,9 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         return (T) createBean(name, beanDefinition, null);
     }
 
+    @Override
+    public void registerSingleton(String beanName, Object singletonObject) throws BeansException {
+        super.registerSingleton(beanName, singletonObject);
+    }
+
 }

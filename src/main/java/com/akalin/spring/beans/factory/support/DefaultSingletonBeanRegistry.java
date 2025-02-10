@@ -1,10 +1,10 @@
 package com.akalin.spring.beans.factory.support;
 
 
+import com.akalin.spring.beans.BeansException;
 import com.akalin.spring.beans.factory.DisposableBean;
 import com.akalin.spring.beans.factory.config.SingletonBeanRegistry;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 
@@ -13,13 +13,24 @@ import java.util.*;
 @Slf4j
 public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
 
-    private Map<String,Object> singletonObjects = new HashMap<>();  // 单例bean缓存
+    private final Map<String,Object> singletonObjects = new HashMap<>();  // 单例bean缓存
 
     private final Map<String, DisposableBean> disposableBeans = new LinkedHashMap<>();  // 可丢弃的bean实例
 
     @Override
     public Object getSingleton(String beanName) {
         return singletonObjects.get(beanName);
+    }
+
+    @Override
+    public void registerSingleton(String beanName, Object singletonObject) {
+        synchronized (this.singletonObjects) {
+            Object oldObject = this.singletonObjects.get(beanName);
+            if (oldObject != null) {
+                throw new BeansException("Singleton bean name '" + beanName + "' has been already registered!");
+            }
+            addSingleton(beanName, singletonObject);
+        }
     }
 
     /**

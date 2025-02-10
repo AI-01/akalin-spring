@@ -2,7 +2,7 @@ package com.akalin.spring.beans.factory.config;
 
 import com.akalin.spring.beans.factory.BeanFactory;
 
-public interface ConfigurableBeanFactory extends BeanFactory {
+public interface ConfigurableBeanFactory extends BeanFactory, SingletonBeanRegistry {
 
     String SCOPE_SINGLETON = "singleton";
 

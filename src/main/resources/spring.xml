@@ -14,4 +14,8 @@
     <bean id = "beanFactoryPostProcessor" class="com.akalin.spring.bean.MyBeanFactoryPostProcessor"/>
     <bean id = "beanPostProcessor" class="com.akalin.spring.bean.MyBeanPostProcessor"/>
 
+<!--    <bean id="applicationListener" class="com.akalin.spring.event.ContextRefreshedEventListener"/>-->
+    <bean id="applicationListener" class="com.akalin.spring.event.CustomEventListener"/>
+<!--    <bean id="applicationListener" class="com.akalin.spring.event.ContextClosedEventListener"/>-->
+
 </beans>

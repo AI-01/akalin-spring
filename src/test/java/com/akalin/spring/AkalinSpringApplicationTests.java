@@ -5,6 +5,7 @@ import com.akalin.spring.bean.UserService;
 import com.akalin.spring.beans.factory.support.ClassPathXmlApplicationContext;
 import com.akalin.spring.core.io.DefaultResourceLoader;
 import com.akalin.spring.core.io.Resource;
+import com.akalin.spring.event.CustomEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -50,7 +51,7 @@ class AkalinSpringApplicationTests {
     }
 
     @Test
-    public void testBeanFactory() {
+    public void testApplicationContext() {
         // 1.初始化applicationContext
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
         applicationContext.registerShutdownHook();
@@ -60,4 +61,11 @@ class AkalinSpringApplicationTests {
         System.out.println("result=" + userService.queryUserInfo());
     }
 
+    @Test
+    public void test_event() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
+        applicationContext.publishEvent(new CustomEvent(applicationContext, 1001L, "akin"));
+
+        applicationContext.registerShutdownHook();
+    }
 }
